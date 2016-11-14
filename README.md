@@ -4,6 +4,13 @@
 - [Introduction](#introduction).
 - [Reference style guides](#reference-style-guides).
 - [Project structure](#project-structure).
+- [Naming conventions](#naming-conventions).
+	- [Modules](#naming--modules).
+	- [Configuration blocks](#naming--configuration-blocks).
+	- [Controllers](#naming--controllers).
+	- [Data model](#naming--data-model).
+	- [Data service, util service and shared model](#naming--data-service-util-service-shared-model).
+	- []().
 
 ## Introduction
 
@@ -100,7 +107,7 @@ Is important to mention that I use the [UI-Router](https://github.com/angular-ui
 - `app.config.js`: all the config blocks encapsulated in one module. In this way, you don't pollute the root module with config blocks.
 - `app.states.js`: all the app states tree defined in one file. Also, this way, you don't pollute the root module with states.
 - `/root`: views and controllers that are part of the root state. I use an abstract state as the first state. This state is called root, and any other state in the application is a nested state of the root. Root states defines the main template that is composed of [multiple named views](https://github.com/angular-ui/ui-router/wiki/Multiple-Named-Views), those named views contains common components that are present in any section of the app like a top bar menu or whatever.
-- `/common`: contains common Angular artifacts and modules in the UI context. I use to keep all the module artifacts (controller, service, etc.) together in a folder (like clients module in the example) that typically refers to a section or component on the app, but some artifacts are used for more than one module.
+- `/common`: contains common Angular artifacts and modules in the UI context. I use to keep all the module artifacts (controller, service, etc.) together in a folder (like clients module in the example) that typically refers to a section or component of the app, but some artifacts are used for more than one module.
 I consider those artifacts are orphans, let's put an example with a directive that is used in dashboard and in clients section, where you will put this directive? in dashboard folder or clients folder? The answer is in `/common` folder.
 The same with a common module. That's why is the unique folder that follows the **sort by type** structuring approach, for the variety of artifacts and modules that can contain.
 - `/clients`: represents a state/section of the app and wraps all the artifacts that form it. There are simple sections like `clients` in the [example of app structure](#example-of-app-structure) or little bit complex like `clients` in the [example of huge module](#example-of-huge-module).
@@ -108,3 +115,145 @@ The huge module example is for a section formed by subsections, following the ex
 The list of the clients and when you want to go deep in a client of the list, you will have a detail client section.
 
 In the example of app structure](#example-of-app-structure) I am using a **structuring for modules** approach in all the project except inside the `/common` folder, due to his nature (explained above) has to follow **sort by type**.
+
+## Naming conventions
+
+- Directories: there is no secret, just use `lowerCamelCase` as style. For the name itself, use the feature that represents.
+
+- Filename: I follow a pattern that describes the component feature and its type: `feature.type.js`.
+
+	List of types:
+	- Root module: `app.js`.
+	- Common module: `clients.module.js`.
+	- Configuration blocks: `app.config`.
+	- Controller: `clients.ctrl.js`.
+	- Data model: `clients.model.js`.
+	- Data service: `clients.dataSrv.js`.
+	- Util or business service: `clients.util.js`.
+	- Shared method: `clients.sharedModel.js`.
+	- Directives: `scrollTo.drtv.js`.
+	- Decorator: `scrollTo.dctr.js`.
+	- Component: `clients.comp.js`.
+
+### Angular artifacts:
+
+All the code example below are focused on registrate/create the module or artifact, not in the definition of the artifacts itself. The definitions are cover in the [recipes section](#recipes).
+
+<a name="naming--modules"></a>
+#### Modules:
+- Filename:
+	- Root module: `app.js`.
+	- Common module: `feature.module.js` -> `clients.module.js`.
+	- Style: `lowerCamelCase`.
+	- Name: the name is formed by a set of arguments:
+		- First: application name, for example: `awCrm` (awesome CRM).
+		- Second: module feature, for example: `clients`.
+		- Third or more: what is need, like an action that represents the module: `new`, `list`, `detail`, etcetera.
+		- Examples:
+			- awCrm.clients.list.
+			- awCrm.users.new.
+			- awCrm.dashboard.
+
+<a name="naming--configuration-blocks"></a>
+#### Configuration blocks:
+- Filename: `app.config.js`.
+- Style: `lowerCamelCase`.
+- Name: the name is formed by two arguments (some people prefer to use just `config`):
+	- First: application name.
+	- Second: config.
+	- Example: awCrm.config.
+- Example in code:
+```javascript
+const config = angular
+	.module('awCrm.config', [])
+	.config(['$provide', ($provide) => new LogDecorator($provide)]);
+	.name;
+
+export default config;
+```
+
+<a name="naming--controllers"></a>
+#### Controllers
+- Filename: `clientsList.ctrl.js`.
+- Style: `UpperCamelCase`.
+- Name: use the controller feature to name it.
+- Example: `ClientsListCtrl`.
+- Example of register a controller in code:
+```javascript
+import ClientsListCtrl from './clientsList.ctrl.js';
+
+const clientsList = angular
+	.module('awCrm.clients.list', [])
+	.controller('ClientsListCtrl', ClientsListCtrl)
+	.name;
+
+export default clientsList;
+```
+
+<a name="naming--data-model"></a>
+#### Data model
+- Filename: `clientsList.model.js`.
+- Style: `UpperCamelCase`.
+- Name: use the data model feature to name it.
+- Example: `ClientsListModel`.
+- Example of register a data model in code:
+```javascript
+import ClientsListModel from `./clientsList.model.js`;
+
+const clientsList = angular
+	.module('awCrm.clients.list')
+	.service('ClientsListModel', ClientsListModel)
+	.name;
+
+export default clientsList;
+```
+
+<a name="naming--data-service-util-service-shared-model"></a>
+#### Data service, util service and shared model
+*I put these three artifacts together because their are identical in terms of naming conventions.*
+
+- Filename:
+	- Data services: `clients.dataSrv.js`.
+	- Util or business service: `clients.util.js`.
+	- Shared model: `clients.sharedModel.js`.
+- Style: `lowerCamelCase`.
+- Name: use the feature that their represents to name it.
+- Examples:
+	- Data service: `clientsDataSrv`.
+	- Util or business service: `clientsUtil`.
+	- Shared model: `clientsSharedModel`.
+- Example of register a data service, util and shared model in code:
+```javascript
+import clientsDataSrv from './clients.dataSrv.js';
+import clientsUtil from './clients.util.js';
+import clientsSharedModel from './clients.sharedModel.js';
+
+const clientsList = angular
+	.module('awCrm.clients.list', [])
+	.service('clientsDataSrv', clientsDataSrv)
+	.service('clientsUtil', clientsUtil)
+	.service('clientsSharedModel', clientsSharedModel)
+	.name;
+
+export default clientsList;
+```
+
+<a name="naming--directives"></a>
+#### Directives
+- Filename: `scrollTo.drtv.js`.
+- Style: directives are tricky because they have a name to register it in Angular and other to use it in a view (is created automatically).
+	- Register: `lowerCamelCase`.
+	- Use in a view: `dash-separator`.
+- Name: use the feature that represents to name it.
+- Example: `scrollTo`.
+- Example of register a directive in code:
+```javascript
+import scrollTo from './scrollTo.drtv.js';
+
+const module = angular
+	.module('awCrm.directives.scrollTo', [])
+	.directive('scrollTo', scrollTo)
+	.name;
+
+export default module;
+```
