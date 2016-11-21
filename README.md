@@ -13,6 +13,9 @@
 	- [Directives](#naming--directives).
 - [Artifacts recipes](#artifacts-recipes):
 	- [Dependency injection](#dependency-injection).
+	- [Modules](#modules_1).
+	- [Config Blocks](#config-blocks).
+	- [Controllers](#controllers_1).
 
 ## Introduction
 
@@ -334,3 +337,65 @@ export default someModule;
 - Use the import name (for example, `SomeCtrl` in the example) when register an artifact (controller, service, etcetera). [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y024).
 - Declare the dependencies of the artifact within through the `$inject` service (see [dependency injection](#dependency-injection)). This makes clear the module definitions and keeps DRY each artifact.
 - When a module have more than 2 dependencies, is recommended to declare it as a list instead of inline.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Config blocks
+
+Register the block, is a little bit tricky. See the [example above](#configuration-blocks). Dependency injections are different than in other artifacts, in that case we have to declare it in the module definition.
+
+Definition of the block as a class:
+```javascript
+class LogDecorator {
+	
+	constructor($provide){
+		$provide.decorator('$log', ['$delegate', '$injector']){
+			// code of the decorator
+		}
+	}
+
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Controllers
+```javascript
+class Section1Ctrl {
+	
+	static get $inject(){
+		return ['$timeout'];
+	}
+
+	constructor($timeout){
+		this.$timeout = $timeout;
+		this.sumResult = null;
+		this.subResult = null;
+	}
+
+	doSum(a,b){
+		this.sumResult = a+b;
+		this.$timeout( () => {
+			console.log('delayed log');
+		}, 2000);
+	}
+
+	doSub(a,b){
+		this.subResult = a-b;
+		return this.subResult;
+	}
+
+}
+
+export default Section1Ctrl;
+```
+
+- **DOM manipulation:** do not manipulate DOM in a controller, use a directive instead.
+- Use constructor:
+	- To manage dependency injection (`$timeout` in the example). And bin the dependency to `this`.
+	- To define public (should bind to `this`) and private properties.
+- ControllerAs syntax: [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y031).
+- Presentational logic only (MVVM): presentation logic only inside controller, delegate to service the business logic. [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y035).
+- Manually identify dependencies: use `$inject` (see [dependency injection](#dependency-injection)).
+
+**[⬆ back to top](#table-of-contents)**
