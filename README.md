@@ -300,3 +300,37 @@ class SomeCtrl {
 Why a static getter? a getter in ES6, adds a pseudo-property in the class prototype that can be read using `classInstance.property`. That is what Angular need when instantiating an artifact.
 
 **[⬆ back to top](#table-of-contents)**
+
+### Modules
+
+**Root module:**
+```javascript
+import depModule from 'path/to/depModule';
+
+angular
+	.module('awCrm', [
+		depModule1,
+		depModule2,
+		depModule3
+	]);
+```
+
+**Common module:**
+```javascript
+import SomeCtrl from './some.ctrl.js';
+import SomeSrv from './some.srv.js';
+
+const someModule = angular
+	.module('awCrm', [])
+	.service('someSrv', SomeSrv)
+	.controller('SomeCtrl', SomeCtrl)
+	.name;
+
+export default someModule;
+```
+
+- Declare a modules in a const and use chaining with the getter syntax. [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y022).
+- Assign the module name (notice the `.name` at the end) to a `const` in order to return thath name. That makes able to import in other modules or dependencies array.
+- Use the import name (for example, `SomeCtrl` in the example) when register an artifact (controller, service, etcetera). [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y024).
+- Declare the dependencies of the artifact within through the `$inject` service (see [dependency injection](#dependency-injection)). This makes clear the module definitions and keeps DRY each artifact.
+- When a module have more than 2 dependencies, is recommended to declare it as a list instead of inline.
