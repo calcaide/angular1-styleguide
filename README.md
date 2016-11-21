@@ -332,17 +332,17 @@ const someModule = angular
 export default someModule;
 ```
 
-- Declare a modules in a const and use chaining with the getter syntax. [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y022).
-- Assign the module name (notice the `.name` at the end) to a `const` in order to return thath name. That makes able to import in other modules or dependencies array.
-- Use the import name (for example, `SomeCtrl` in the example) when register an artifact (controller, service, etcetera). [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y024).
+- Declare modules in a const and use chaining with the getter syntax. [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y022).
+- Assign the module name (notice the `.name` at the end) to a `const` to return that name. That makes able to import in other modules or dependencies array.
+- Use the import name (for example, `SomeCtrl` in the example) when registering an artifact (controller, service, etcetera). [Why?](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y024).
 - Declare the dependencies of the artifact within through the `$inject` service (see [dependency injection](#dependency-injection)). This makes clear the module definitions and keeps DRY each artifact.
-- When a module have more than 2 dependencies, is recommended to declare it as a list instead of inline.
+- When a module has more than 2 dependencies, is recommended to declare it as a list instead of inline.
 
 **[⬆ back to top](#table-of-contents)**
 
 ### Config blocks
 
-Register the block, is a little bit tricky. See the [example above](#configuration-blocks). Dependency injections are different than in other artifacts, in that case we have to declare it in the module definition.
+Register the block, is a little bit tricky. See the [example above](#configuration-blocks). Dependency injections are different than in other artifacts, in that case, we have to declare it in the module definition.
 
 Definition of the block as a class:
 ```javascript
@@ -399,3 +399,88 @@ export default Section1Ctrl;
 - Manually identify dependencies: use `$inject` (see [dependency injection](#dependency-injection)).
 
 **[⬆ back to top](#table-of-contents)**
+
+### Data model
+
+Since ES6, I use to wrap data model in a `.service` angular artifact instead in ES5 approach that I used to wrap it in a `.factory`.
+
+```javascript
+class Depcontainer {
+	
+	static get $inject(){
+		return ['$timeout', 'dep2'];
+	}
+
+	constructor($timeout, dep){ // dependency injections
+
+		return class Section1Model {
+
+			constructor(arg, arg2){ // data model itself
+				this.property = arg;
+				this.property2 = arg2;
+			}
+
+			method(){
+				// some code here
+			}
+		};
+	}
+}
+
+export default DepContainer;
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Data service
+
+I use the data service to encapsulate the responsability to interact with the API. I use to wrap Data service in a `.service()` angular artifact.
+
+```javascript
+let getMockClient;
+
+class ClientsDataSrv {
+	
+	static get $inject(){
+		return ['$http'];
+	}
+
+	constructor($http){
+		this.$http = $http; // Bound injection
+		this.isCalled = false; // public property
+
+		getMockClient = () => { // private method
+			return {name:'Carlos', surname:'Alcaide', age:23};
+		};
+	}
+
+	getClient(idClient){
+		return this.$http({
+			url: '/client/'+idClient,
+			method: 'GET'
+		}).then( (result) => {
+			return result;
+		});
+	}
+
+	getClients(){
+		return this.$http({
+			ur: '/clients',
+			method: 'GET'
+		}).then( (result) => {
+			return result;
+		});
+	}
+
+	getStaticInfo(){
+		return getMockClient();
+	}
+
+}
+
+export default ClientsDataSrv;
+```
+
+Because ES6 approach:
+- The dependencies are setted as a public poperty of the class, so you can not use `$http`, should use `this.$http`.
+- Define (if you need it them) a private method in the constructor, first you should declare a `let` outside the class.
