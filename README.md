@@ -4,13 +4,15 @@
 - [Introduction](#introduction).
 - [Reference style guides](#reference-style-guides).
 - [Project structure](#project-structure).
-- [Naming conventions](#naming-conventions).
+- [Naming conventions](#naming-conventions):
 	- [Modules](#naming--modules).
 	- [Configuration blocks](#naming--configuration-blocks).
 	- [Controllers](#naming--controllers).
 	- [Data model](#naming--data-model).
 	- [Data service, util service and shared model](#naming--data-service-util-service-shared-model).
-	- []().
+	- [Directives](#naming--directives).
+- [Artifacts recipes](#artifacts-recipes):
+	- [Dependency injection](#dependency-injection).
 
 ## Introduction
 
@@ -22,6 +24,8 @@ Since Angular 1.5.x and above it is possible to use it with a component based ar
 
 This style guide is the result of in-depth working with Angular (since 2013), having discussions with co-workers and other developers, reading a lot of articles and other style guides that I will mention in [reference style guides](#reference-style-guides).
 
+**[⬆ back to top](#table-of-contents)**
+
 ## Reference style guides
 
 - [Todd Motto - Angular 1.4.x / ES5 styleguide](https://github.com/toddmotto/angular-styleguide/tree/angular-old-es5).
@@ -31,6 +35,8 @@ This style guide is the result of in-depth working with Angular (since 2013), ha
 - [Ben Nadel - Blog](https://www.bennadel.com/).
 - [Todd Motto - Blog](https://toddmotto.com/).
 - [John Papa - Blog](https://johnpapa.net/).
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Project structure
 
@@ -114,7 +120,9 @@ The same with a common module. That's why is the unique folder that follows the 
 The huge module example is for a section formed by subsections, following the example, you have a section `/clients`, but inside this section, you will have two subsections: list and detail.
 The list of the clients and when you want to go deep in a client of the list, you will have a detail client section.
 
-In the example of app structure](#example-of-app-structure) I am using a **structuring for modules** approach in all the project except inside the `/common` folder, due to his nature (explained above) has to follow **sort by type**.
+In the [example of app structure](#example-of-app-structure) I am using a **structuring for modules** approach in all the project except inside the `/common` folder, due to his nature (explained above) has to follow **sort by type**.
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Naming conventions
 
@@ -137,7 +145,7 @@ In the example of app structure](#example-of-app-structure) I am using a **struc
 
 ### Angular artifacts:
 
-All the code example below are focused on registrate/create the module or artifact, not in the definition of the artifacts itself. The definitions are cover in the [recipes section](#recipes).
+All the code example below are focused on registrate/create the module or artifact, not in the definition of the artifacts itself. The definitions are cover in the [recipes section](#artifacts-recipes).
 
 <a name="naming--modules"></a>
 #### Modules:
@@ -153,6 +161,8 @@ All the code example below are focused on registrate/create the module or artifa
 			- awCrm.clients.list.
 			- awCrm.users.new.
 			- awCrm.dashboard.
+
+**[⬆ back to top](#table-of-contents)**
 
 <a name="naming--configuration-blocks"></a>
 #### Configuration blocks:
@@ -172,6 +182,8 @@ const config = angular
 export default config;
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 <a name="naming--controllers"></a>
 #### Controllers
 - Filename: `clientsList.ctrl.js`.
@@ -190,6 +202,8 @@ const clientsList = angular
 export default clientsList;
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 <a name="naming--data-model"></a>
 #### Data model
 - Filename: `clientsList.model.js`.
@@ -207,6 +221,8 @@ const clientsList = angular
 
 export default clientsList;
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 <a name="naming--data-service-util-service-shared-model"></a>
 #### Data service, util service and shared model
@@ -238,6 +254,8 @@ const clientsList = angular
 export default clientsList;
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 <a name="naming--directives"></a>
 #### Directives
 - Filename: `scrollTo.drtv.js`.
@@ -257,3 +275,28 @@ const module = angular
 
 export default module;
 ```
+
+**[⬆ back to top](#table-of-contents)**
+
+## Artifacts Recipes
+
+### Dependency injection
+
+To include the dependency injection in the Angular artifacts implemented as ES6 classes it's recommended to use the next pattern:
+
+```javascript
+class SomeCtrl {
+	
+	static get $inject(){
+		return ['DepModule'];
+	}
+
+	constructor(DepModule){
+		this.DepModule = DepModule;
+	}
+}
+```
+
+Why a static getter? a getter in ES6, adds a pseudo-property in the class prototype that can be read using `classInstance.property`. That is what Angular need when instantiating an artifact.
+
+**[⬆ back to top](#table-of-contents)**
