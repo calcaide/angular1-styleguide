@@ -13,9 +13,16 @@
 	- [Directives](#naming--directives).
 - [Artifacts recipes](#artifacts-recipes):
 	- [Dependency injection](#dependency-injection).
-	- [Modules](#modules_1).
+	- [Modules](#modules-1).
 	- [Config Blocks](#config-blocks).
-	- [Controllers](#controllers_1).
+	- [Controllers](#controllers-1).
+	- [Data models](#data-model-1).
+	- [Data service](#data-service).
+	- [Util service](#util-service).
+	- [Shared model](#shared-model).
+	- [Factories](#factories).
+	- [Filters](#filters).
+	- [Directives](#directives-1).
 
 ## Introduction
 
@@ -434,7 +441,7 @@ export default DepContainer;
 
 ### Data service
 
-I use the data service to encapsulate the responsability to interact with the API. I use to wrap Data service in a `.service()` angular artifact.
+I use the data service to encapsulate the responsibility to interact with the API. I use to wrap Data service in a `.service()` angular artifact.
 
 ```javascript
 let getMockClient;
@@ -482,5 +489,70 @@ export default ClientsDataSrv;
 ```
 
 Because ES6 approach:
-- The dependencies are setted as a public poperty of the class, so you can not use `$http`, should use `this.$http`.
+- The dependencies are set as a public property of the class, so you can not use `$http`, should use `this.$http`.
 - Define (if you need it them) a private method in the constructor, first you should declare a `let` outside the class.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Util service
+
+Util services are useful when you want to encapsulate some logic that is not part of presentational logic. A clear example could be a util service that encapsulates date methods like `today() => Thursday 09-06-2016`. Is used in the view, but is not part of the presentational logic, so for this cases use a util service.
+
+The recipe is the same that in [Data service](#data-service).
+
+**[⬆ back to top](#table-of-contents)**
+
+### Shared model
+
+Shared models are useful when you want to share models (essentially state) between controllers or whatever angular artifact.
+The recipe is the same that in [Data service](#data-service) but because the shared models are ONLY for share data, they have not to deal with dependencies.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Factories
+
+Since I use ES6 approach, I deprecated the use of factories, [here](http://www.michaelbromley.co.uk/blog/350/exploring-es6-classes-in-angularjs-1-x#_section-factories) the reference about that.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Filters
+
+```javascript
+class ToLowerCase {
+	
+	constructor($timeout){
+		return (input) => {
+			return input.toLowerCase();
+		}
+	}
+}
+
+export default ToLowerCase;
+```
+
+- The filter function should be a [pure function](https://en.wikipedia.org/wiki/Pure_function), should be stateless and idempotent.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Directives
+
+Actually, the community recommends using component instead directive artifact. Note that I am not saying use the component architecture, just use the `.component` angular artifact. Just in two cases is recommended still using directives:
+	- You need to use explicitly link function.
+	- Your component doesn't have any template or it well be specified as attribute (strict).
+
+```javascript
+const AutoFocus = ($timeout) => ({
+	restrict: 'A',
+	link($scope, $element, $attrs){
+		$scope.$watch($attrs.autoFocus, (newValue, oldValue) => {
+			if(!newValue){
+				return;
+			}
+		});
+	}
+});
+
+AutoFocus.$inject = ['$timeout'];
+
+export default AutoFocus;
+```
